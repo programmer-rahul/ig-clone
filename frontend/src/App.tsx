@@ -1,12 +1,13 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage.tsx";
+
 const App = () => {
   return (
-    <div>
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tenetur nemo
-      provident reiciendis saepe? Consectetur dolores soluta architecto
-      quibusdam modi, aperiam asperiores perspiciatis! Quam tempore reiciendis
-      eaque similique quibusdam provident officiis minus quos inventore?
-      Voluptatem placeat nulla officiis fuga perferendis architecto!
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </Router>
   );
 };
 export default App;
