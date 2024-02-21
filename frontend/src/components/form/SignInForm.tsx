@@ -1,7 +1,10 @@
 import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useAxios from "../../hooks/useAxios.ts";
+import useAuth from "../../hooks/useAuth.ts";
+import { storeUserInLocal } from "../../utils/localStorage.ts";
 
 export type FormValues = {
   username: string;
@@ -14,21 +17,37 @@ const SignInForm = () => {
     username: "",
     password: "",
   });
+  const [apiError, setApiError] = useState("");
+  const { callApi, response, loading } = useAxios();
+  const { setIsAuth } = useAuth();
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (
       !(
         formValues.username?.trim().length > 0 &&
         formValues.password?.trim().length >= 6
       )
     )
-      return "";
+      return;
 
     console.log("clicked");
-    // TODO : Api call
+    callApi({ method: "post", url: "/user/signin", data: formValues });
   };
+
+  useEffect(() => {
+    if (response) {
+      console.log("Response recieved :- ", response);
+      if (response.status) {
+        if (response.data) {
+          setIsAuth(true);
+          storeUserInLocal(response.data);
+        }
+      } else {
+        setApiError(response.message);
+      }
+    }
+  }, [response]);
 
   return (
     <form
@@ -38,6 +57,7 @@ const SignInForm = () => {
       <FormInput
         placeholder="Phone number,username or email address"
         value={formValues.username}
+        loading={loading}
         onChange={(e) => {
           setFormValues((prev) => {
             return { ...prev, username: e.target.value };
@@ -48,6 +68,7 @@ const SignInForm = () => {
         type="password"
         placeholder="Password"
         value={formValues.password}
+        loading={loading}
         onChange={(e) => {
           setFormValues((prev) => {
             return { ...prev, password: e.target.value };
@@ -62,7 +83,12 @@ const SignInForm = () => {
         <hr className="border-zinc-300 w-full" />
       </div>
       <div className="errors text-center text-red-600 text-sm">
-        {/* TODO : Handle Api error  */}
+        {apiError && <p>{apiError}</p>}
+      </div>
+      <div>
+        {loading && (
+          <p className="text-center mx-auto font-bold loading-spinner"></p>
+        )}
       </div>
       <Link
         className="text-xs text-center mt-2 lg:text-sm"

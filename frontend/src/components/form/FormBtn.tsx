@@ -14,10 +14,10 @@ const FormBtn: React.FC<FormBtnProps> = ({
   return (
     <button
       type={type}
-      className={`w-full my-2 lg:my-3 lg:py-2 lg:text-xl bg-[#4CB5F9] text-white font-semibold py-1 rounded-md ${
+      className={`w-full my-2 lg:my-3 lg:py-2 lg:text-xl bg-[#0094f6a7] text-white font-semibold py-1 rounded-md ${
         values.username?.trim().length > 0 &&
         values.password?.trim().length >= 6 &&
-        "bg-[#0095F6]"
+        "bg-[#0094f6]"
       }`}
     >
       {text}
