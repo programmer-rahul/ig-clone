@@ -1,3 +1,5 @@
+import { FormValues } from "../components/form/SignInForm";
+
 export const getUserFromLocal = () => {
   try {
     let localValue = localStorage.getItem("current-user");
@@ -18,5 +20,14 @@ export const storeUserInLocal = (data: {}) => {
     localStorage.setItem("current-user", JSON.stringify(data));
   } catch (error) {
     console.log("Error in storing user in localStorage");
+  }
+};
+
+export const setSignupDataInLocal = (formValues: FormValues) => {
+  try {
+    localStorage.setItem("signupdata", JSON.stringify(formValues));
+    return true;
+  } catch (error) {
+    console.log("Error in setting values in localStorage");
   }
 };

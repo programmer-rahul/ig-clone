@@ -1,50 +1,43 @@
 import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAxios from "../../hooks/useAxios.ts";
-import useAuth from "../../hooks/useAuth.ts";
-import { storeUserInLocal } from "../../utils/localStorage.ts";
+import { setSignupDataInLocal } from "../../utils/localStorage.ts";
+import { Errors, formValidation } from "../../utils/validations.ts";
+import { useNavigate } from "react-router-dom";
 
 export type FormValues = {
+  email: string;
+  fullname: string;
   username: string;
   password: string;
-  confPassword?: string;
 };
 
-const SignInForm = () => {
+const SignUpForm = () => {
   const [formValues, setFormValues] = useState<FormValues>({
+    email: "",
+    fullname: "",
     username: "",
     password: "",
   });
-  const [apiError, setApiError] = useState("");
+  const [errors, setErrors] = useState<Errors>({});
   const { callApi, response, loading } = useAxios();
-  const { setIsAuth } = useAuth();
+  const navigate = useNavigate();
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      !(
-        formValues.username?.trim().length > 0 &&
-        formValues.password?.trim().length >= 6
-      )
-    )
-      return;
 
-    console.log("clicked");
-    callApi({ method: "post", url: "/user/signin", data: formValues });
+    formValidation({ formValues, setErrors }) &&
+      callApi({ method: "post", url: "/user/signup", data: formValues });
   };
 
   useEffect(() => {
     if (response) {
       console.log("Response recieved :- ", response);
       if (response.status) {
-        if (response.data) {
-          setIsAuth(true);
-          storeUserInLocal(response.data);
-        }
+        setSignupDataInLocal(formValues) && navigate("/verify");
       } else {
-        setApiError(response.message);
+        // TODO : Error handling
       }
     }
   }, [response]);
@@ -55,7 +48,28 @@ const SignInForm = () => {
       onSubmit={submitHandler}
     >
       <FormInput
-        placeholder="Phone number,username or email address"
+        placeholder="Mobile number or email address"
+        value={formValues.email}
+        loading={loading}
+        onChange={(e) => {
+          setFormValues((prev) => {
+            return { ...prev, email: e.target.value };
+          });
+        }}
+      />
+      <FormInput
+        placeholder="Fullname"
+        value={formValues.fullname}
+        loading={loading}
+        onChange={(e) => {
+          setFormValues((prev) => {
+            return { ...prev, fullname: e.target.value };
+          });
+        }}
+      />
+      <FormInput
+        type="text"
+        placeholder="Username"
         value={formValues.username}
         loading={loading}
         onChange={(e) => {
@@ -75,29 +89,16 @@ const SignInForm = () => {
           });
         }}
       />
-      <FormBtn text="Log in" values={formValues} />
-      <div className="line my-2 relative w-full flex flex-col justify-center items-center">
-        <span className="absolute bg-white px-4 font-semibold lg:text-xl">
-          OR
-        </span>
-        <hr className="border-zinc-300 w-full" />
-      </div>
+      <FormBtn text="Sign Up" values={formValues} />
       <div className="errors text-center text-red-600 text-sm">
-        {/* TODO : Handle Api error  */}
-        {apiError && <p>{apiError}</p>}
+        {errors && <p>{errors.apiError}</p>}
       </div>
       <div>
         {loading && (
           <p className="text-center mx-auto font-bold loading-spinner"></p>
         )}
       </div>
-      <Link
-        className="text-xs text-center mt-2 lg:text-sm"
-        to={"/forgot-password"}
-      >
-        Forgotten your password?
-      </Link>
     </form>
   );
 };
-export default SignInForm;
+export default SignUpForm;

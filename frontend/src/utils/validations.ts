@@ -1,6 +1,8 @@
-import { FormValues } from "../components/form/SignInForm";
+import { FormValues } from "../components/form/SignUpForm";
 
 export type Errors = {
+  email?: string;
+  fullname?: string;
   username?: string;
   password?: string;
   apiError?: string;
@@ -12,12 +14,11 @@ type FormValidations = {
 };
 
 export const formValidation = ({ formValues, setErrors }: FormValidations) => {
-  const { username, password, confPassword } = formValues;
+  const { username, password, email, fullname } = formValues;
   let errors: Errors = {};
 
   if (username?.trim() === "") {
     errors.username = "Username is Required";
-    console.log("yes");
   }
   if (password?.length < 6) {
     errors.password = "Password should be 6 character long";
@@ -25,12 +26,13 @@ export const formValidation = ({ formValues, setErrors }: FormValidations) => {
   if (password?.trim() === "") {
     errors.password = "Password is Required";
   }
-  if (confPassword?.trim() === "" && confPassword !== undefined) {
-    errors.confPassword = "Confirm Password is Required";
+  if (!email.includes("@") || !email.includes(".com")) {
+    errors.email = "Email is not valid";
   }
-  if (password?.trim() !== confPassword?.trim() && confPassword !== undefined) {
-    errors.confPassword = "Password and Confirm Password should be same";
+  if (fullname?.trim() === "") {
+    errors.fullname = "Full name is required";
   }
+
   console.log("errors :- ", errors);
   setErrors(errors);
 
