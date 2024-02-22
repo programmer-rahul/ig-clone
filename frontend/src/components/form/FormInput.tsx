@@ -1,5 +1,5 @@
 type FormInputProps = {
-  type?: "text" | "password";
+  type?: "text" | "password" | "number";
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

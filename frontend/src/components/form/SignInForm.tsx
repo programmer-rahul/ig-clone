@@ -75,7 +75,15 @@ const SignInForm = () => {
           });
         }}
       />
-      <FormBtn text="Log in" values={formValues} />
+      <FormBtn
+        text="Log in"
+        btnValidation={
+          formValues.username?.trim().length > 0 &&
+          formValues.password?.trim().length >= 6
+            ? true
+            : false
+        }
+      />
       <div className="line my-2 relative w-full flex flex-col justify-center items-center">
         <span className="absolute bg-white px-4 font-semibold lg:text-xl">
           OR

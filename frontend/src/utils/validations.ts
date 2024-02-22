@@ -11,9 +11,14 @@ export type Errors = {
 type FormValidations = {
   formValues: FormValues;
   setErrors: React.Dispatch<React.SetStateAction<Errors>>;
+  runSetterFunc?: boolean;
 };
 
-export const formValidation = ({ formValues, setErrors }: FormValidations) => {
+export const formValidation = ({
+  formValues,
+  setErrors,
+  runSetterFunc = true,
+}: FormValidations) => {
   const { username, password, email, fullname } = formValues;
   let errors: Errors = {};
 
@@ -33,8 +38,8 @@ export const formValidation = ({ formValues, setErrors }: FormValidations) => {
     errors.fullname = "Full name is required";
   }
 
-  console.log("errors :- ", errors);
-  setErrors(errors);
+  // console.log("errors :- ", errors);
+  runSetterFunc && setErrors(errors);
 
   return Object.keys(errors).length === 0 ? true : false;
 };

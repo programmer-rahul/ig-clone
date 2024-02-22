@@ -89,7 +89,18 @@ const SignUpForm = () => {
           });
         }}
       />
-      <FormBtn text="Sign Up" values={formValues} />
+      <FormBtn
+        text="Sign Up"
+        btnValidation={
+          formValidation({
+            formValues,
+            setErrors,
+            runSetterFunc: false,
+          })
+            ? true
+            : false
+        }
+      />
       <div className="errors text-center text-red-600 text-sm">
         {errors && <p>{errors.apiError}</p>}
       </div>
