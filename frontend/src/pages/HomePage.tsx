@@ -1,6 +1,6 @@
-import SignInPage from './SignInPage.tsx'
+import SignInPage from "./SignInPage.tsx";
 
 const HomePage = () => {
-  return <SignInPage/>;
+  return <div>Home Page</div>;
 };
 export default HomePage;

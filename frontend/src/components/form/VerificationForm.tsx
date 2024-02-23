@@ -2,8 +2,8 @@ import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
 import { useEffect, useState } from "react";
 import useAxios from "../../hooks/useAxios.ts";
-import { Errors, formValidation } from "../../utils/validations.ts";
 import { useNavigate } from "react-router-dom";
+import { getSignupDataFromLocal } from "../../utils/localStorage.ts";
 
 const VerificationForm = () => {
   const [otp, setOtp] = useState("");
@@ -13,12 +13,19 @@ const VerificationForm = () => {
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    otp.length === 6 &&
-      callApi({ method: "post", url: "/user/signup", data: otp });
+
+    if (otp.length !== 6) return;
+
+    const signupdata = getSignupDataFromLocal();
+    callApi({
+      method: "post",
+      url: "/user/verify-otp",
+      data: { otp, ...signupdata },
+      cred: true,
+    });
   };
 
   useEffect(() => {
-    console.log("rendered");
     const userData = localStorage.getItem("signupdata");
     if (!userData) return navigate("/signup");
   }, []);
@@ -27,8 +34,10 @@ const VerificationForm = () => {
     if (response) {
       console.log("Response recieved :- ", response);
       if (response.status) {
+        localStorage.removeItem("signupdata");
+        navigate("/profile-setup");
       } else {
-        // TODO : Error handling
+        setApiError(response.message);
       }
     }
   }, [response]);

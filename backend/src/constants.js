@@ -1,5 +1,5 @@
 const IS_DEV = true;
-const DB_NAME = "uTube";
+const DB_NAME = "ig-clone";
 const CookieOptions = {
   httpOnly: true,
   secure: true,

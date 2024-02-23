@@ -27,6 +27,10 @@ const FormBtn: React.FC<FormBtnProps> = ({
       btnCss += " bg-[#7ec1edfe] ";
   }
 
+  if (text === "Add Picture" && btnValidation) {
+    text = "Done";
+  }
+
   return (
     <button
       type={type}

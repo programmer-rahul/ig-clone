@@ -32,12 +32,18 @@ const SignUpForm = () => {
   };
 
   useEffect(() => {
+    const userData = localStorage.getItem("signupdata");
+    if (userData) return navigate("/verify-otp");
+  }, []);
+
+  useEffect(() => {
     if (response) {
       console.log("Response recieved :- ", response);
       if (response.status) {
-        setSignupDataInLocal(formValues) && navigate("/verify");
+        setSignupDataInLocal(formValues) && navigate("/verify-otp");
       } else {
         // TODO : Error handling
+        setErrors({ ...errors, apiError: response.message });
       }
     }
   }, [response]);

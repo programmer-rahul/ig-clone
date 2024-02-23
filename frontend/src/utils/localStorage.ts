@@ -31,3 +31,17 @@ export const setSignupDataInLocal = (formValues: FormValues) => {
     console.log("Error in setting values in localStorage");
   }
 };
+
+type SignUpData = {
+  username: string;
+  fullname: string;
+  password: string;
+  email: string;
+};
+
+export const getSignupDataFromLocal = () => {
+  let localValues = localStorage.getItem("signupdata");
+  if (!localValues) return;
+  const signupdata: SignUpData = JSON.parse(localValues);
+  return signupdata;
+};

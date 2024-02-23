@@ -7,19 +7,28 @@ const VerificationForm = () => {
   const [selectedImage, setSelectedImage] = useState("default-profile.svg");
   const imageRef = useRef<HTMLImageElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [apiError, setApiError] = useState("");
-  const { callApi, response, loading } = useAxios();
+  const { callApi, response } = useAxios();
   const navigate = useNavigate();
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     console.log("clicked");
     if (inputRef.current?.files?.length === 0) return inputRef.current?.click();
 
     // next logic for file selected
+    if (inputRef.current?.files?.length === 0) return "";
+    const formData = new FormData();
+    inputRef.current?.files &&
+      formData.append("avatar", inputRef.current.files[0]);
+
+    await callApi({
+      method: "put",
+      url: "/user/update-avatar",
+      data: formData,
+      cred: true,
+    });
   };
-  const skipBtnHandler = () => {};
 
   const inputChangeHandler = () => {
     const reader = new FileReader();
@@ -30,17 +39,10 @@ const VerificationForm = () => {
   };
 
   useEffect(() => {
-    console.log("rendered");
-    const userData = localStorage.getItem("signupdata");
-    // if (!userData) return navigate("/signup");
-  }, []);
-
-  useEffect(() => {
     if (response) {
       console.log("Response recieved :- ", response);
       if (response.status) {
-      } else {
-        // TODO : Error handling
+        navigate("/");
       }
     }
   }, [response]);
@@ -71,7 +73,13 @@ const VerificationForm = () => {
           type="submit"
           btnValidation={selectedImage === "default-profile.svg" ? false : true}
         />
-        <FormBtn text="Skip" type="button" clickHandler={skipBtnHandler} />
+        <FormBtn
+          text="Skip"
+          type="button"
+          clickHandler={() => {
+            navigate("/");
+          }}
+        />
       </div>
     </form>
   );

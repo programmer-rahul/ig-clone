@@ -1,6 +1,6 @@
 import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAxios from "../../hooks/useAxios.ts";
 import useAuth from "../../hooks/useAuth.ts";
@@ -20,6 +20,7 @@ const SignInForm = () => {
   const [apiError, setApiError] = useState("");
   const { callApi, response, loading } = useAxios();
   const { setIsAuth } = useAuth();
+  const navigate = useNavigate();
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +33,12 @@ const SignInForm = () => {
       return;
 
     console.log("clicked");
-    callApi({ method: "post", url: "/user/signin", data: formValues });
+    callApi({
+      method: "post",
+      url: "/user/signin",
+      data: formValues,
+      cred: true,
+    });
   };
 
   useEffect(() => {
@@ -41,7 +47,8 @@ const SignInForm = () => {
       if (response.status) {
         if (response.data) {
           setIsAuth(true);
-          storeUserInLocal(response.data);
+          response.data.user && storeUserInLocal(response.data.user);
+          navigate("/");
         }
       } else {
         setApiError(response.message);
