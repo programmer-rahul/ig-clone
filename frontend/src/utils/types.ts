@@ -1,0 +1,15 @@
+export type IconNames =
+  | "heartIcon"
+  | "commentIcon"
+  | "shareIcon"
+  | "saveIcon"
+  | "emojiIcon"
+  | "barIcon"
+  | "dotIcon"
+  | "searchIcon"
+  | "homeIcon"
+  | "reelIcon"
+  | "createIcon"
+  | "messangerIcon"
+  | "defaultProfileIcon"
+  | "instagramIcon";
