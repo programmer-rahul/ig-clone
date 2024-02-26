@@ -7,7 +7,6 @@
   --svg-color: #ff0000; /* Change SVG color to red */
 }
 
-
 html,
 body {
   margin: 0px;
@@ -31,3 +30,10 @@ body {
   }
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
