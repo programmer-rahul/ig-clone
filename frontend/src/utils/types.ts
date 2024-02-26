@@ -1,8 +1,10 @@
 export type IconNames =
   | "heartIcon"
+  | "likedIcon"
   | "commentIcon"
   | "shareIcon"
   | "saveIcon"
+  | "savedIcon"
   | "emojiIcon"
   | "barIcon"
   | "dotIcon"

@@ -1,3 +1,4 @@
+import allPosts from "../../utils/allPosts";
 import SinglePost from "./SinglePost";
 
 const AllPostsContainer = () => {
@@ -7,10 +8,9 @@ const AllPostsContainer = () => {
       <div className="stories"></div>
 
       <div className="all-posts border flex flex-col items-center gap-4 pt-8">
-        <SinglePost />
-        <SinglePost />
-        <SinglePost />
-        <SinglePost />
+        {allPosts?.map((post, index) => {
+          return <SinglePost key={index} post={post} />;
+        })}
       </div>
     </div>
   );
