@@ -51,10 +51,10 @@ const SinglePost = ({ post }: { post: PostProps }) => {
   };
 
   return (
-    <div className="post w-[470px] bg-stone-800 space-y-2">
+    <div className="post w-[470px] space-y-2 border">
       <div className="top flex justify-between px-2  ">
-        <div className="left flex gap-2 items-center">
-          <div className="user-profile w-8 h-8 border rounded-full">
+        <div className="left flex items-center gap-2">
+          <div className="user-profile h-8 w-8 rounded-full border">
             {avatar}
           </div>
           <div className="user-info text-base">
@@ -77,10 +77,16 @@ const SinglePost = ({ post }: { post: PostProps }) => {
         </div>
       </div>
 
-      <div className="center w-full border h-[585px]"></div>
+      <div className="center h-[585px] w-full border">
+        <video
+          className="aspect-video h-full border border-red-900"
+          src="video/one-piece.mp4"
+          controls
+        ></video>
+      </div>
 
       <div className="bottom space-y-2">
-        <div className="first flex justify-between items-center">
+        <div className="first flex items-center justify-between">
           <div className="left flex gap-4">
             <Icon
               // icon="heartIcon"
@@ -107,15 +113,15 @@ const SinglePost = ({ post }: { post: PostProps }) => {
             <span className="username font-semibold">{username}</span>
             {"  "}
             <span className="text-sm">{description}</span>
-            <span className="leading-3 text-stone-400 text-sm">...more</span>
+            <span className="text-sm leading-3 text-stone-400">...more</span>
           </p>
-          <p className="all-comments text-stone-400 text-sm pt-2">
+          <p className="all-comments pt-2 text-sm text-stone-400">
             View all <span>{commentsCount}</span> Comments
           </p>
 
-          <div className="add-new-comment text-stone-400 relative">
+          <div className="add-new-comment relative text-stone-400">
             <textarea
-              className="bg-transparent w-full pr-14 resize-none outline-none"
+              className="w-full resize-none bg-transparent pr-14 outline-none"
               placeholder="Add a comment..."
               value={newCommentText}
               onChange={(e) => {
@@ -123,8 +129,8 @@ const SinglePost = ({ post }: { post: PostProps }) => {
               }}
               rows={1}
             ></textarea>
-            <div className="absolute right-0 top-0 h-6 flex items-center gap-2">
-              <button className="text-blue-600 font-semibold">
+            <div className="absolute right-0 top-0 flex h-6 items-center gap-2">
+              <button className="font-semibold text-blue-600">
                 {newCommentText.trim().length > 0 && "Post"}
               </button>
               <Icon icon="emojiIcon" size="5" />
