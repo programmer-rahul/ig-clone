@@ -14,4 +14,14 @@ export type IconNames =
   | "createIcon"
   | "messangerIcon"
   | "defaultProfileIcon"
+  | "profileIcon"
   | "instagramIcon";
+
+export interface User {
+  _id: string;
+  username: string;
+  fullname : string,
+  email: string;
+  avatar: string;
+  refreshToken: string;
+}

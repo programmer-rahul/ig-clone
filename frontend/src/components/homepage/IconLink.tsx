@@ -11,11 +11,11 @@ type LinkProps = {
 const IconLink = ({ icon, text, css, clickHandler }: LinkProps) => {
   return (
     <div
-      className={`home-icon flex items-center gap-4 font-semibold transition-all hover:bg-stone-700 cursor-pointer md:p-1 md:rounded-md xl:w-full  ${css}`}
+      className={`home-icon flex cursor-pointer items-center gap-4 font-semibold transition-all hover:bg-stone-700 md:rounded-md md:p-1 xl:w-full  ${css}`}
       onClick={clickHandler}
     >
       <Icon icon={icon} />
-      <p className="hidden xl:block capitalize">{text}</p>
+      <p className="hidden capitalize xl:block">{text}</p>
     </div>
   );
 };

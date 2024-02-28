@@ -3,7 +3,7 @@ import IconLink from "./IconLink";
 import useHome from "../../hooks/useHome";
 
 const SideNavBar = () => {
-  const { setIsPopup } = useHome();
+  const { setIsPopup, currentUser } = useHome();
 
   return (
     <div className="sidebar flex h-[8%] items-center border-t border-stone-700 text-stone-300 md:h-full md:w-[10%] md:flex-col md:justify-between md:border-r md:border-t-0 md:py-4 xl:w-[20%] xl:px-4 2xl:w-[14%]">
@@ -26,7 +26,11 @@ const SideNavBar = () => {
         />
         <IconLink icon="messangerIcon" text="Messages" />
         <IconLink icon="heartIcon" text="Notifications" css="hidden md:flex" />
-        <IconLink icon="defaultProfileIcon" text="Profile" />
+
+        <IconLink
+          icon={currentUser ? "profileIcon" : "defaultProfileIcon"}
+          text="Profile"
+        />
       </ul>
 
       {/* more settings  */}

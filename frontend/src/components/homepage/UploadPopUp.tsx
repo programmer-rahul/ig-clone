@@ -26,7 +26,7 @@ const UploadPopUp = () => {
 
   return (
     <>
-      <div className="upload-popup absolute left-1/2 top-1/2 h-96 w-80 -translate-x-1/2 -translate-y-1/2 rounded-lg text-white opacity-100 md:h-[600px] md:w-[600px] lg:h-[700px] lg:w-[800px] 2xl:h-[800px] 2xl:w-[1000px]">
+      <div className="upload-popup absolute left-1/2 top-1/2 h-[30rem] w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-lg text-white opacity-100 md:h-[600px] md:w-[600px] lg:h-[700px] lg:w-[800px] 2xl:h-[800px] 2xl:w-[1000px]">
         <div className="grid place-content-center border-b border-stone-400 bg-[#262626] py-2 text-center font-semibold md:text-xl">
           Create new post
         </div>
@@ -69,17 +69,29 @@ const UploadPopUp = () => {
               fill="currentColor"
             ></path>
           </svg>
-          <p>Drag photos and videos here</p>
-
           {!selectedFile ? (
-            <button
-              className="rounded-lg bg-blue-600 px-4 py-1 text-base"
-              onClick={btnClickHandler}
-            >
-              Select From Computer
-            </button>
+            <>
+              <p>Drag photos and videos here</p>
+
+              <button
+                className="rounded-lg bg-blue-600 px-4 py-1 text-base"
+                onClick={btnClickHandler}
+              >
+                Select From Computer
+              </button>
+            </>
           ) : (
-            ""
+            <>
+              <p>Uplaoding...</p>
+              <div className="flex h-20 w-full items-center justify-between px-5">
+                <div className="h-4 w-[70%] rounded-full border">
+                  <p className="h-full w-1/2 rounded-full bg-red-500"></p>
+                </div>
+                <button className="rounded-md bg-sky-600 px-2 py-1 text-base">
+                  Cancel
+                </button>
+              </div>
+            </>
           )}
 
           <input

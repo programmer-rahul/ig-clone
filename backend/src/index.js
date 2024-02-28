@@ -15,8 +15,3 @@ connectDB()
   .catch(() => {
     console.log("Server Connection Error");
   });
-  
-
-
-
-

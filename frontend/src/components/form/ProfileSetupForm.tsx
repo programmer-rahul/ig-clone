@@ -2,6 +2,8 @@ import FormBtn from "./FormBtn.tsx";
 import { useEffect, useRef, useState } from "react";
 import useAxios from "../../hooks/useAxios.ts";
 import { useNavigate } from "react-router-dom";
+import { storeUserInLocal } from "../../utils/localStorage.ts";
+import useAuth from "../../hooks/useAuth.ts";
 
 const VerificationForm = () => {
   const [selectedImage, setSelectedImage] = useState("default-profile.svg");
@@ -9,6 +11,7 @@ const VerificationForm = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { callApi, response } = useAxios();
   const navigate = useNavigate();
+  const { setIsAuth } = useAuth();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +45,9 @@ const VerificationForm = () => {
     if (response) {
       console.log("Response recieved :- ", response);
       if (response.status) {
+        console.log(response.data);
+        response.data?.user && storeUserInLocal(response.data.user);
+        setIsAuth(true);
         navigate("/");
       }
     }
@@ -49,18 +55,18 @@ const VerificationForm = () => {
 
   return (
     <form
-      className="form w-full flex flex-col gap-2 lg:gap-4 items-center h-full justify-between"
+      className="form flex h-full w-full flex-col items-center justify-between gap-2 lg:gap-4"
       onSubmit={submitHandler}
     >
-      <div className="profile w-32 h-32  rounded-full">
+      <div className="profile h-32 w-32  rounded-full">
         <img
           src={selectedImage}
           alt="profile-image"
-          className="w-full h-full object-cover rounded-full"
+          className="h-full w-full rounded-full object-cover"
           ref={imageRef}
         />
       </div>
-      <div className="buttons  w-full flex items-center flex-col md:flex-row-reverse md:gap-8">
+      <div className="buttons  flex w-full flex-col items-center md:flex-row-reverse md:gap-8">
         <input
           type="file"
           ref={inputRef}

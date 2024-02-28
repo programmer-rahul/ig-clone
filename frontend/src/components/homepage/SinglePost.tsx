@@ -51,11 +51,16 @@ const SinglePost = ({ post }: { post: PostProps }) => {
   };
 
   return (
-    <div className="post w-[470px] space-y-2 border">
+    <div className="post w-[470px] space-y-2 ">
       <div className="top flex justify-between px-2  ">
         <div className="left flex items-center gap-2">
-          <div className="user-profile h-8 w-8 rounded-full border">
-            {avatar}
+          <div className="user-profile h-8 w-8 rounded-full  ">
+            {/* {avatar} */}
+            <img
+              src="luffy.jpg"
+              alt="profile"
+              className="h-full w-full rounded-full object-cover"
+            />
           </div>
           <div className="user-info text-base">
             <span className="username font-semibold">{username}</span>
@@ -77,10 +82,10 @@ const SinglePost = ({ post }: { post: PostProps }) => {
         </div>
       </div>
 
-      <div className="center h-[585px] w-full border">
+      <div className="center h-[585px] w-full">
         <video
-          className="aspect-video h-full border border-red-900"
-          src="video/one-piece.mp4"
+          className="aspect-video h-full   "
+          src="video/whitebeard.mp4"
           controls
         ></video>
       </div>

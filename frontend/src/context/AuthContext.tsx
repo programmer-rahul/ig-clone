@@ -19,9 +19,8 @@ export const AuthContext = createContext<ContextType>({
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuth, setIsAuth] = useState<boolean>(
-    getUserFromLocal() ? true : false
+    getUserFromLocal() ? true : false,
   );
-
   return (
     <AuthContext.Provider value={{ isAuth, setIsAuth }}>
       {children}

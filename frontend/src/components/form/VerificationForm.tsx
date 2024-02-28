@@ -35,6 +35,12 @@ const VerificationForm = () => {
       console.log("Response recieved :- ", response);
       if (response.status) {
         localStorage.removeItem("signupdata");
+        // console.log(response.data);
+        if (!response.data) return;
+        localStorage.setItem(
+          "current-user",
+          JSON.stringify(response.data?.user),
+        );
         navigate("/profile-setup");
       } else {
         setApiError(response.message);
@@ -44,7 +50,7 @@ const VerificationForm = () => {
 
   return (
     <form
-      className="form w-full flex flex-col gap-2 lg:gap-4"
+      className="form flex w-full flex-col gap-2 lg:gap-4"
       onSubmit={submitHandler}
     >
       <FormInput
@@ -57,12 +63,12 @@ const VerificationForm = () => {
         }}
       />
       <FormBtn text="Verify" btnValidation={otp.length === 6 ? true : false} />
-      <div className="errors text-center text-red-600 text-sm">
+      <div className="errors text-center text-sm text-red-600">
         {apiError && <p>{apiError}</p>}
       </div>
       <div>
         {loading && (
-          <p className="text-center mx-auto font-bold loading-spinner"></p>
+          <p className="loading-spinner mx-auto text-center font-bold"></p>
         )}
       </div>
     </form>

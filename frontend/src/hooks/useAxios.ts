@@ -1,24 +1,17 @@
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
+import { User } from "../utils/types";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api/v1",
 });
-
-interface User {
-  _id?: string;
-  username: string;
-  email: string;
-  fullname: string;
-  avatar: string;
-}
 
 interface Response {
   status: boolean;
   statusCode?: number;
   message: string;
   data: {
-    user?: User;
+    user: User;
   } | null;
 }
 

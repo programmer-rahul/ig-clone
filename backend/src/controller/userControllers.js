@@ -7,6 +7,7 @@ import {
   generateRefreshToken,
 } from "../utils/generateToken.js";
 import { CookieOptions } from "../constants.js";
+import {generateOtp} from '../utils/functions.js'
 
 export const signIn = async (req, res, next) => {
   const { username, password } = req.body;
@@ -43,7 +44,7 @@ export const signIn = async (req, res, next) => {
     {
       new: true,
     }
-  ).select("username refreshToken avatar");
+  ).select("username fullname email refreshToken avatar");
 
   return res
     .status(200)
@@ -71,7 +72,7 @@ export const signUp = async (req, res, next) => {
   if (isUsernameAvailable)
     return next(new ApiError(400, "Username is not available"));
 
-  const otp = Math.floor(Math.random() * 999998);
+  const otp = generateOtp();
   console.log("otp :- ", otp);
 
   const OTP = await Otp.create({ email, otp });
@@ -81,7 +82,7 @@ export const signUp = async (req, res, next) => {
   console.log("Otp Generating successfully");
   return res
     .status(200)
-    .json(new ApiResponse(200, { OTP }, "Otp send successfully"));
+    .json(new ApiResponse(200, { user: {} }, "Otp send successfully"));
 };
 
 export const verifyOTP = async (req, res, next) => {
@@ -100,6 +101,15 @@ export const verifyOTP = async (req, res, next) => {
   if (getEmail.otp !== Number(userOtp))
     return next(new ApiError(400, "Wrong otp"));
 
+  const newUser = await User.create({
+    email,
+    password,
+    fullname,
+    username,
+    refreshToken: "",
+  });
+  if (!newUser) return next(new ApiError(400, "Error in creating user"));
+
   const accessToken = generateAccessToken({
     _id: newUser._id,
     email,
@@ -111,25 +121,19 @@ export const verifyOTP = async (req, res, next) => {
     username,
   });
 
-  const newUser = await User.create({
-    email,
-    password,
-    fullname,
-    username,
-    refreshToken,
-  }).select("username avatar refreshToken");
+  const user = await User.findByIdAndUpdate(newUser._id, {
+    $set: {
+      refreshToken,
+    },
+  }).select("username fullname email refreshToken avatar");
 
-  const removeOtp = await Otp.deleteOne({ _id: getEmail._id });
-
-  if (!newUser) return next(new ApiError(400, "Error in creating user"));
-
+  await Otp.deleteOne({ _id: getEmail._id });
   console.log("User signup success");
-
   return res
     .status(200)
     .cookie("accessToken", accessToken, CookieOptions)
     .cookie("refreshToken", refreshToken, CookieOptions)
-    .json(new ApiResponse(200, { user: newUser }, "User signup success"));
+    .json(new ApiResponse(200, { user }, "User signup success"));
 };
 
 export const updateAvatar = async (req, res, next) => {
@@ -147,20 +151,36 @@ export const updateAvatar = async (req, res, next) => {
     {
       new: true,
     }
-  ).select("-password");
+  ).select("username fullname email refreshToken avatar");
 
-  if (!updateAvatar)
+  if (!updatedAvatar)
     return next(
       new ApiError(400, "Error in updated avatar,may wrong credentials")
     );
 
+  // console.log(updatedAvatar);
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { newUser: updateAvatar },
+        { user: updatedAvatar },
         "Avatar updated successfuly"
       )
     );
+};
+
+export const getCurrentUser = async (req, res, next) => {
+  if (!req?.user) return next(new ApiError(400, "Unauthorized request"));
+
+  const user = await User.findById(req.user._id).select(
+    "username avatar refreshToken"
+  );
+  console.log(user);
+
+  if (!user) new ApiError(400, "Error in getting user from db");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "User fetched successfuly"));
 };

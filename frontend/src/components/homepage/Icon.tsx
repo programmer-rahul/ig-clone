@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import useHome from "../../hooks/useHome";
 import { IconNames } from "../../utils/types";
 
 export type IconProps = {
@@ -9,6 +11,7 @@ export type IconProps = {
 };
 
 const Icon = ({ clickHandler, icon, size = "8", css = "" }: IconProps) => {
+  const { currentUser } = useHome();
   return (
     <div
       className={`cursor-pointer transition-all ${css}`}
@@ -18,7 +21,14 @@ const Icon = ({ clickHandler, icon, size = "8", css = "" }: IconProps) => {
       }}
       onClick={clickHandler}
     >
-      {allSvg[icon]}
+      {icon === "profileIcon" ? (
+        <img
+          src={"http://localhost:5000/" + currentUser?.avatar}
+          alt="profile"
+        />
+      ) : (
+        allSvg[icon]
+      )}
     </div>
   );
 };
@@ -27,7 +37,7 @@ export default Icon;
 const allSvg = {
   heartIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -47,7 +57,7 @@ const allSvg = {
   ),
   likedIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -106,7 +116,7 @@ const allSvg = {
 
   shareIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -128,7 +138,7 @@ const allSvg = {
   saveIcon: (
     <svg
       aria-label="Save"
-      className="w-full h-full"
+      className="h-full w-full"
       fill=""
       height="24"
       role="img"
@@ -148,7 +158,7 @@ const allSvg = {
   savedIcon: (
     <svg
       aria-label="Save"
-      className="w-full h-full"
+      className="h-full w-full"
       fill=""
       height="24"
       role="img"
@@ -167,7 +177,7 @@ const allSvg = {
 
   emojiIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="20px"
       height="20px"
       viewBox="0 0 24 24"
@@ -195,7 +205,7 @@ const allSvg = {
 
   barIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -226,7 +236,7 @@ const allSvg = {
 
   dotIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -270,7 +280,7 @@ const allSvg = {
 
   searchIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       // width="20px"
       // height="20px"
       viewBox="0 0 24 24"
@@ -290,7 +300,7 @@ const allSvg = {
 
   homeIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 1024 1024"
@@ -305,7 +315,7 @@ const allSvg = {
 
   reelIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       version="1.1"
       fill="#fff"
       id="Layer_1"
@@ -322,7 +332,7 @@ const allSvg = {
 
   createIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="-2.4 -2.4 28.80 28.80"
@@ -357,7 +367,7 @@ const allSvg = {
 
   messangerIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       fill="#ffffff"
       width="800px"
       height="800px"
@@ -381,7 +391,7 @@ const allSvg = {
 
   defaultProfileIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
@@ -419,7 +429,7 @@ const allSvg = {
 
   instagramIcon: (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       width="800px"
       height="800px"
       viewBox="0 0 24 24"
