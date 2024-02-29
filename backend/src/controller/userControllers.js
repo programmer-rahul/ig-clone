@@ -7,7 +7,7 @@ import {
   generateRefreshToken,
 } from "../utils/generateToken.js";
 import { CookieOptions } from "../constants.js";
-import {generateOtp} from '../utils/functions.js'
+import { generateOtp } from "../utils/functions.js";
 
 export const signIn = async (req, res, next) => {
   const { username, password } = req.body;
@@ -176,7 +176,7 @@ export const getCurrentUser = async (req, res, next) => {
   const user = await User.findById(req.user._id).select(
     "username avatar refreshToken"
   );
-  console.log(user);
+  // console.log(user);
 
   if (!user) new ApiError(400, "Error in getting user from db");
 

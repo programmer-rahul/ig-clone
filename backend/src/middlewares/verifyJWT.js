@@ -8,25 +8,24 @@ const verifyJWT = async (req, res, next) => {
       req?.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer", "");
 
-    console.log(token);
-    if (!token) next(new ApiError(401, "Unauthorized request"));
+    // console.log(token);
+    if (!token) return next(new ApiError(401, "No token found"));
 
     const isValid = jwt.verify(token, process.env.ACCESS_TOKEN_KEY);
 
-    if (!isValid) next(new ApiError(401, "Expired or wrong token"));
+    if (!isValid) return next(new ApiError(401, "Expired or wrong token"));
 
     const user = await User.findById(isValid._id).select(
       "-password -refreshToken"
     );
 
-    if (!user) next(new ApiError(401, "Error in getting fetching user"));
+    if (!user) return next(new ApiError(401, "Error in fetching user"));
 
     req.user = user;
-    // console.log("user", req.user);
     next();
   } catch (error) {
-    console.log(error);
-    return next(new ApiError(500, "Error in jwt"));
+    console.log(error.message);
+    return next(new ApiError(500, error.message));
   }
 };
 

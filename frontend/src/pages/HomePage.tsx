@@ -8,9 +8,10 @@ import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useAxios from "../hooks/useAxios";
 import { removeUserFromLocal } from "../utils/localStorage";
+import ClosePopupIcon from "../components/reusable/ClosePopupIcon";
 
 const HomePage = () => {
-  const { isPopup, setIsPopup, currentUser } = useHome();
+  const { isPopup, currentUser } = useHome();
   const { setIsAuth } = useAuth();
   const { callApi, response } = useAxios();
 
@@ -20,10 +21,11 @@ const HomePage = () => {
       callApi({ url: "/user/get-current-user", method: "get", cred: true });
     }
   }, []);
+
   useEffect(() => {
     if (response && currentUser) {
-      console.log(response);
-      if (response.message === "Unauthorized request") {
+      // console.log(response);
+      if (response.message === "No token found") {
         removeUserFromLocal();
         // Todo : Call logout api
         setIsAuth(false);
@@ -51,15 +53,10 @@ const HomePage = () => {
         </div>
 
         {isPopup && (
-          <div
-            className="popups absolute left-0 top-0 h-full w-full"
-            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-              if (e.target.className.split(" ")[0] === "popups") {
-                setIsPopup(false);
-              }
-            }}
-          >
+          <div className="popups absolute left-0 top-0 h-full w-full">
             {isPopup && <UploadPopUp />}
+            {/* cross icon  */}
+            <ClosePopupIcon />
           </div>
         )}
       </div>
@@ -67,13 +64,3 @@ const HomePage = () => {
   );
 };
 export default HomePage;
-
-// <div
-//   className="popups absolute left-0 top-0 h-screen w-screen border"
-//   onClick={(e) => {
-//     console.log("clicked", e);
-//   }}
-// >
-//   {/*upload pop up  */}
-//   {isPopup && <UploadPopUp />}
-// </div>

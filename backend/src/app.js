@@ -25,7 +25,10 @@ app.use(express.static("public"));
 
 // routes
 import userRoutes from "./routes/userRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/post", postRoutes);
 
 // middleware for errorHandling
 app.use(errorHandler);
