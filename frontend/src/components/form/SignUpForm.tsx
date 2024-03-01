@@ -1,10 +1,10 @@
 import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
 import { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios.ts";
-import { setSignupDataInLocal } from "../../utils/localStorage.ts";
 import { Errors, formValidation } from "../../utils/validations.ts";
 import { useNavigate } from "react-router-dom";
+import { LocalStorage, apiHandler } from "../../utils/index.ts";
+import { signupUser } from "../../api/index.ts";
 
 export type FormValues = {
   email: string;
@@ -21,36 +21,37 @@ const SignUpForm = () => {
     password: "",
   });
   const [errors, setErrors] = useState<Errors>({});
-  const { callApi, response, loading } = useAxios();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    formValidation({ formValues, setErrors }) &&
-      callApi({ method: "post", url: "/user/signup", data: formValues });
+    formValidation({ formValues, setErrors }) && singupHandler();
+  };
+
+  const singupHandler = async () => {
+    await apiHandler(
+      () => signupUser(formValues),
+      setLoading,
+      () => {
+        LocalStorage.set("signupdata", formValues);
+        navigate("/verify-otp");
+      },
+      (err) => {
+        setErrors({ ...errors, apiError: err });
+      },
+    );
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem("signupdata");
+    const userData = LocalStorage.get("signupdata");
     if (userData) return navigate("/verify-otp");
   }, []);
 
-  useEffect(() => {
-    if (response) {
-      console.log("Response recieved :- ", response);
-      if (response.status) {
-        setSignupDataInLocal(formValues) && navigate("/verify-otp");
-      } else {
-        // TODO : Error handling
-        setErrors({ ...errors, apiError: response.message });
-      }
-    }
-  }, [response]);
-
   return (
     <form
-      className="form w-full flex flex-col gap-2 lg:gap-4"
+      className="form flex w-full flex-col gap-2 lg:gap-4"
       onSubmit={submitHandler}
     >
       <FormInput
@@ -107,12 +108,12 @@ const SignUpForm = () => {
             : false
         }
       />
-      <div className="errors text-center text-red-600 text-sm">
+      <div className="errors text-center text-sm text-red-600">
         {errors && <p>{errors.apiError}</p>}
       </div>
       <div>
         {loading && (
-          <p className="text-center mx-auto font-bold loading-spinner"></p>
+          <p className="loading-spinner mx-auto text-center font-bold"></p>
         )}
       </div>
     </form>

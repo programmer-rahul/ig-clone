@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import useHome from "../../hooks/useHome";
 import { IconNames } from "../../utils/types";
+import { useAuth } from "../../context/AuthContext";
 
 export type IconProps = {
   clickHandler?: () => void;
@@ -11,7 +10,7 @@ export type IconProps = {
 };
 
 const Icon = ({ clickHandler, icon, size = "8", css = "" }: IconProps) => {
-  const { currentUser } = useHome();
+  const { user } = useAuth();
   return (
     <div
       className={`cursor-pointer transition-all ${css}`}
@@ -23,8 +22,9 @@ const Icon = ({ clickHandler, icon, size = "8", css = "" }: IconProps) => {
     >
       {icon === "profileIcon" ? (
         <img
-          src={"http://localhost:5000/" + currentUser?.avatar}
+          src={user?.avatar.url}
           alt="profile"
+          className="h-full rounded-full border object-cover"
         />
       ) : (
         allSvg[icon]

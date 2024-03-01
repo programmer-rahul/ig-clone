@@ -1,13 +1,15 @@
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import User from "../models/User.js";
-import Otp from "../models/Otp.js";
+import UserModel from "../models/user.models.js";
+import OtpModel from "../models/otp.models.js";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/generateToken.js";
 import { CookieOptions } from "../constants.js";
 import { generateOtp } from "../utils/functions.js";
+
+import { getLocalFilePath, getStaticFilePath } from "../utils/helper.js";
 
 export const signIn = async (req, res, next) => {
   const { username, password } = req.body;
@@ -16,7 +18,7 @@ export const signIn = async (req, res, next) => {
     return next(new ApiError(400, "All fields required"));
   }
 
-  const existedUser = await User.findOne({ username });
+  const existedUser = await UserModel.findOne({ username });
 
   if (!existedUser) return next(new ApiError(400, "Wrong username"));
 
@@ -34,7 +36,7 @@ export const signIn = async (req, res, next) => {
     username,
   });
 
-  const updatedUser = await User.findByIdAndUpdate(
+  const updatedUser = await UserModel.findByIdAndUpdate(
     existedUser._id,
     {
       $set: {
@@ -44,13 +46,19 @@ export const signIn = async (req, res, next) => {
     {
       new: true,
     }
-  ).select("username fullname email refreshToken avatar");
+  ).select("username fullname email avatar");
 
   return res
     .status(200)
     .cookie("accessToken", accessToken, CookieOptions)
     .cookie("refreshToken", refreshToken, CookieOptions)
-    .json(new ApiResponse(200, { user: updatedUser }, "User signup success"));
+    .json(
+      new ApiResponse(
+        200,
+        { user: updatedUser, accessToken },
+        "User signup success"
+      )
+    );
 };
 
 export const signUp = async (req, res, next) => {
@@ -66,7 +74,7 @@ export const signUp = async (req, res, next) => {
     return next(new ApiError(400, "Fields should not be empty"));
   }
 
-  const isUsernameAvailable = await User.findOne({ username });
+  const isUsernameAvailable = await UserModel.findOne({ username });
 
   console.log(isUsernameAvailable);
   if (isUsernameAvailable)
@@ -75,7 +83,7 @@ export const signUp = async (req, res, next) => {
   const otp = generateOtp();
   console.log("otp :- ", otp);
 
-  const OTP = await Otp.create({ email, otp });
+  const OTP = await OtpModel.create({ email, otp });
 
   if (!OTP) return next(new ApiError(400, "Error in creating OTP"));
 
@@ -87,13 +95,12 @@ export const signUp = async (req, res, next) => {
 
 export const verifyOTP = async (req, res, next) => {
   const { otp: userOtp, email, password, fullname, username } = req.body;
-  console.log("userOtp", userOtp);
 
   if (userOtp.trim().length !== 6) {
     return next(new ApiError(400, "Wrong Otp"));
   }
 
-  const getEmail = await Otp.findOne({ email });
+  const getEmail = await OtpModel.findOne({ email });
 
   console.log(getEmail);
   if (!getEmail) return next(new ApiError(400, "Otp expired or wrong email"));
@@ -101,7 +108,7 @@ export const verifyOTP = async (req, res, next) => {
   if (getEmail.otp !== Number(userOtp))
     return next(new ApiError(400, "Wrong otp"));
 
-  const newUser = await User.create({
+  const newUser = await UserModel.create({
     email,
     password,
     fullname,
@@ -121,19 +128,19 @@ export const verifyOTP = async (req, res, next) => {
     username,
   });
 
-  const user = await User.findByIdAndUpdate(newUser._id, {
+  const user = await UserModel.findByIdAndUpdate(newUser._id, {
     $set: {
       refreshToken,
     },
-  }).select("username fullname email refreshToken avatar");
+  }).select("username fullname email avatar");
 
-  await Otp.deleteOne({ _id: getEmail._id });
+  await OtpModel.deleteOne({ _id: getEmail._id });
   console.log("User signup success");
   return res
     .status(200)
     .cookie("accessToken", accessToken, CookieOptions)
     .cookie("refreshToken", refreshToken, CookieOptions)
-    .json(new ApiResponse(200, { user }, "User signup success"));
+    .json(new ApiResponse(200, { user, accessToken }, "User signup success"));
 };
 
 export const updateAvatar = async (req, res, next) => {
@@ -141,24 +148,31 @@ export const updateAvatar = async (req, res, next) => {
   console.log(req.user);
   if (!req?.user) return next(new ApiError(400, "Unauthorized request"));
 
-  const updatedAvatar = await User.findByIdAndUpdate(
+  console.log(req.file);
+  const url = getStaticFilePath(req, req.file.filename);
+  const localPath = getLocalFilePath(req.file.filename);
+
+  const updatedAvatar = await UserModel.findByIdAndUpdate(
     { _id: req.user._id },
     {
       $set: {
-        avatar: req.file.filename,
+        avatar: {
+          url,
+          localPath,
+        },
       },
     },
     {
       new: true,
     }
-  ).select("username fullname email refreshToken avatar");
+  ).select("username fullname email avatar");
 
   if (!updatedAvatar)
     return next(
       new ApiError(400, "Error in updated avatar,may wrong credentials")
     );
 
-  // console.log(updatedAvatar);
+  console.log(updatedAvatar);
   return res
     .status(200)
     .json(
@@ -173,7 +187,7 @@ export const updateAvatar = async (req, res, next) => {
 export const getCurrentUser = async (req, res, next) => {
   if (!req?.user) return next(new ApiError(400, "Unauthorized request"));
 
-  const user = await User.findById(req.user._id).select(
+  const user = await UserModel.findById(req.user._id).select(
     "username avatar refreshToken"
   );
   // console.log(user);

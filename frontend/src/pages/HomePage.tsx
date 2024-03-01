@@ -4,34 +4,10 @@ import AllPostsContainer from "../components/homepage/AllPostsContainer";
 import SideNavBar from "../components/homepage/SideNavBar";
 import useHome from "../hooks/useHome";
 import UploadPopUp from "../components/homepage/UploadPopUp";
-import { useEffect } from "react";
-import useAuth from "../hooks/useAuth";
-import useAxios from "../hooks/useAxios";
-import { removeUserFromLocal } from "../utils/localStorage";
 import ClosePopupIcon from "../components/reusable/ClosePopupIcon";
 
 const HomePage = () => {
-  const { isPopup, currentUser } = useHome();
-  const { setIsAuth } = useAuth();
-  const { callApi, response } = useAxios();
-
-  // this is for when a user close his browser then his cookie was removed to make sure that if user have no cookie then to logout user
-  useEffect(() => {
-    if (currentUser) {
-      callApi({ url: "/user/get-current-user", method: "get", cred: true });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (response && currentUser) {
-      // console.log(response);
-      if (response.message === "No token found") {
-        removeUserFromLocal();
-        // Todo : Call logout api
-        setIsAuth(false);
-      }
-    }
-  }, [response]);
+  const { isPopup } = useHome();
 
   return (
     <main>

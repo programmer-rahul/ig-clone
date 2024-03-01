@@ -19,16 +19,22 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     avatar: {
-      type: String,
-      default: "",
+      type: {
+        url: String,
+        localPath: String,
+      },
+      default: {
+        url: `http://localhost:5000/profile.svg`,
+        localPath: "",
+      },
     },
-    refreshToken : {
-      type : String,
-      default : null,
-    }
+    refreshToken: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", UserSchema);
-export default User;
+const UserModel = mongoose.model("User", UserSchema);
+export default UserModel;

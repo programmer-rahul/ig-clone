@@ -1,11 +1,11 @@
 import { useAuth } from "../context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = () => {
+const PublicRoute = () => {
   const { user, token } = useAuth();
 
-  if (!user || !token) return <Navigate to={"/signin"} />;
+  if (user && token) return <Navigate to={"/"} />;
 
   return <Outlet />;
 };
-export default ProtectedRoute;
+export default PublicRoute;

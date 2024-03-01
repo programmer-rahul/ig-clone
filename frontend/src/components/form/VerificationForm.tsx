@@ -1,52 +1,45 @@
 import FormInput from "./FormInput.tsx";
 import FormBtn from "./FormBtn.tsx";
 import { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios.ts";
 import { useNavigate } from "react-router-dom";
-import { getSignupDataFromLocal } from "../../utils/localStorage.ts";
+import { LocalStorage, apiHandler } from "../../utils/index.ts";
+import { verifyOtp } from "../../api/index.ts";
 
 const VerificationForm = () => {
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
-  const { callApi, response, loading } = useAxios();
   const navigate = useNavigate();
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (otp.length !== 6) return;
+    verificationHandler();
+  };
 
-    const signupdata = getSignupDataFromLocal();
-    callApi({
-      method: "post",
-      url: "/user/verify-otp",
-      data: { otp, ...signupdata },
-      cred: true,
-    });
+  const verificationHandler = async () => {
+    const signUpData = LocalStorage.get("signupdata");
+    await apiHandler(
+      () => verifyOtp({ otp, ...signUpData }),
+      setLoading,
+      (data) => {
+        console.log(data);
+        LocalStorage.remove("signupdata");
+        LocalStorage.set("user", data.data.user);
+        LocalStorage.set("token", data.data.accessToken);
+        navigate("/profile-setup");
+      },
+      (err) => {
+        setApiError(err);
+      },
+    );
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem("signupdata");
+    const userData = LocalStorage.get("signupdata");
     if (!userData) return navigate("/signup");
   }, []);
-
-  useEffect(() => {
-    if (response) {
-      console.log("Response recieved :- ", response);
-      if (response.status) {
-        localStorage.removeItem("signupdata");
-        // console.log(response.data);
-        if (!response.data) return;
-        localStorage.setItem(
-          "current-user",
-          JSON.stringify(response.data?.user),
-        );
-        navigate("/profile-setup");
-      } else {
-        setApiError(response.message);
-      }
-    }
-  }, [response]);
 
   return (
     <form

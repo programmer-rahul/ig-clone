@@ -1,22 +1,19 @@
 import FormBtn from "./FormBtn.tsx";
-import { useEffect, useRef, useState } from "react";
-import useAxios from "../../hooks/useAxios.ts";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { storeUserInLocal } from "../../utils/localStorage.ts";
-import useAuth from "../../hooks/useAuth.ts";
+import { LocalStorage, apiHandler } from "../../utils/index.ts";
+import { updateAvatar } from "../../api/index.ts";
+import { useAuth } from "../../context/AuthContext.tsx";
 
-const VerificationForm = () => {
+const ProfileSetupForm = () => {
   const [selectedImage, setSelectedImage] = useState("default-profile.svg");
   const imageRef = useRef<HTMLImageElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { callApi, response } = useAxios();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
-  const { setIsAuth } = useAuth();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log("clicked");
     if (inputRef.current?.files?.length === 0) return inputRef.current?.click();
 
     // next logic for file selected
@@ -25,12 +22,20 @@ const VerificationForm = () => {
     inputRef.current?.files &&
       formData.append("avatar", inputRef.current.files[0]);
 
-    await callApi({
-      method: "put",
-      url: "/user/update-avatar",
-      data: formData,
-      cred: true,
-    });
+    updateProfileHandler(formData);
+  };
+
+  const updateProfileHandler = async (formData: FormData) => {
+    await apiHandler(
+      () => updateAvatar(formData),
+      null,
+      (data) => {
+        setUser(data.data.user);
+        LocalStorage.set("user", data.data.user);
+        navigate("/");
+      },
+      () => {},
+    );
   };
 
   const inputChangeHandler = () => {
@@ -40,18 +45,6 @@ const VerificationForm = () => {
     };
     inputRef.current?.files && reader.readAsDataURL(inputRef.current?.files[0]);
   };
-
-  useEffect(() => {
-    if (response) {
-      console.log("Response recieved :- ", response);
-      if (response.status) {
-        console.log(response.data);
-        response.data?.user && storeUserInLocal(response.data.user);
-        setIsAuth(true);
-        navigate("/");
-      }
-    }
-  }, [response]);
 
   return (
     <form
@@ -90,4 +83,4 @@ const VerificationForm = () => {
     </form>
   );
 };
-export default VerificationForm;
+export default ProfileSetupForm;

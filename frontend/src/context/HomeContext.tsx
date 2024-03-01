@@ -8,7 +8,7 @@ import {
 } from "react";
 import { User } from "../utils/types";
 import { getUserFromLocal } from "../utils/localStorage";
-import useAuth from "../hooks/useAuth";
+import { useAuth } from "./AuthContext";
 
 type ContextType = {
   isPopup: boolean;
@@ -26,7 +26,7 @@ export const HomeContext = createContext<ContextType>({
 });
 
 export const HomeProvider = ({ children }: { children: ReactNode }) => {
-  const { isAuth } = useAuth();
+  const { user } = useAuth();
 
   const [isPopup, setIsPopup] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
@@ -36,10 +36,10 @@ export const HomeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const user: User = getUserFromLocal();
-    if (user && isAuth) {
+    if (user && user) {
       setCurrentUser(user);
     }
-  }, [isAuth]);
+  }, [user]);
 
   return (
     <HomeContext.Provider

@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import useAxios from "../../hooks/useAxios";
+import { apiHandler } from "../../utils";
+import { uploadPost } from "../../api";
+import { ApiResponse } from "../../interfaces/api";
+import axios, { CancelTokenSource } from "axios";
 
 const UploadPopUp = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { callApi, response, apiProgress, cancelApi } = useAxios();
+
+  const [response, setResponse] = useState<ApiResponse | undefined>(undefined);
+  const [apiProgress, setApiProgress] = useState(0);
+  const [cancelApi] = useState<CancelTokenSource>(axios.CancelToken.source());
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -20,14 +26,32 @@ const UploadPopUp = () => {
       formData.append("post", selectedFile);
       formData.append("description", "This is description :)");
 
-      callApi({
-        url: "/post/new-post",
-        method: "post",
-        cred: true,
-        data: formData,
-      });
+      uploadPostHandler(formData);
     }
   }, [isUploading]);
+
+  const uploadPostHandler = async (formData: FormData) => {
+    await apiHandler(
+      () =>
+        uploadPost(
+          formData,
+          (progressEvent) => {
+            progressEvent?.total &&
+              setApiProgress(
+                Math.round((progressEvent.loaded / progressEvent.total) * 100),
+              );
+          },
+          cancelApi,
+        ),
+      null,
+      (res) => {
+        setResponse(res);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
+  };
 
   return (
     <div className="upload-popup absolute left-1/2 top-1/2 h-[30rem] w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-lg text-white opacity-100 md:h-[600px] md:w-[600px] lg:h-[700px] lg:w-[800px] 2xl:h-[800px] 2xl:w-[1000px]">
@@ -107,7 +131,7 @@ const UploadPopUp = () => {
             <p>
               {!response
                 ? "Uploading..."
-                : response.status
+                : response.success
                   ? "Uploaded Successfully"
                   : "Uplaod Failed"}
             </p>

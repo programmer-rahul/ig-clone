@@ -1,8 +1,8 @@
 import ApiError from "../utils/ApiError.js";
-import User from "../models/User.js";
+import User from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 
-const verifyJWT = async (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     const token =
       req?.cookies?.accessToken ||
@@ -29,4 +29,4 @@ const verifyJWT = async (req, res, next) => {
   }
 };
 
-export default verifyJWT;
+export default auth;

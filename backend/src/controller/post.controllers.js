@@ -1,7 +1,7 @@
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import Post from "../models/Post.js";
+import PostModel from "../models/post.models.js";
 
 export const newPost = asyncHandler(async (req, res, next) => {
   console.log("here");
@@ -12,7 +12,7 @@ export const newPost = asyncHandler(async (req, res, next) => {
   const { description } = req.body;
   const postType = req.file.mimetype.split("/")[0];
 
-  const newPost = Post.create({
+  const newPost = PostModel.create({
     postType,
     path: req.file.path,
     uplaoder: req.user._id,
