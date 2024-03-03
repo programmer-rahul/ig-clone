@@ -2,14 +2,17 @@ import mongoose from "mongoose";
 
 const PostSchema = new mongoose.Schema(
   {
-    uplaoder: {
+    author: {
       required: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     path: {
       required: true,
-      type: String,
+      type: {
+        url: String,
+        localPath: String,
+      },
     },
     description: {
       required: true,
@@ -20,8 +23,6 @@ const PostSchema = new mongoose.Schema(
       type: String,
       enum: ["video", "image"],
     },
-    likes: [],
-    comments: [],
   },
   { timestamps: true }
 );

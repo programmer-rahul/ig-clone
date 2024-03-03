@@ -1,24 +1,15 @@
 import { useState } from "react";
 import Icon from "./Icon";
+import { apiHandler } from "../../utils";
+import { addNewFollow, disLikePost, likePost, removeFollow } from "../../api";
+import { PostInterface } from "../../interfaces/post";
 
-type PostProps = {
-  postId: string;
-  username: string;
-  uploadedDate: string;
-  avatar: string;
-  description: string;
-
-  commentsCount: number;
-  likesCount: number;
-  isFollowed: boolean;
-  isSaved: boolean;
-  isLiked: boolean;
-};
-
-const SinglePost = ({ post }: { post: PostProps }) => {
-  const [postStates, setPostStates] = useState<PostProps>(post);
+const SinglePost = ({ post }: { post: PostInterface }) => {
+  const [postStates, setPostStates] = useState<PostInterface>({
+    ...post,
+  });
   const {
-    avatar,
+    author,
     commentsCount,
     description,
     isFollowed,
@@ -26,28 +17,48 @@ const SinglePost = ({ post }: { post: PostProps }) => {
     isSaved,
     likesCount,
     postId,
+    comments,
+    postPath,
+    postType,
     uploadedDate,
-    username,
   } = postStates;
 
   const [newCommentText, setNewCommentText] = useState("");
 
   const saveClickHandler = () => {
     setPostStates({ ...postStates, isSaved: !isSaved });
-
     // TODO : save api call
   };
   // console.log(post);
 
-  const likeClickHandler = () => {
+  const likeClickHandler = async () => {
     setPostStates({ ...postStates, isLiked: !isLiked });
+    console.log(isLiked);
 
-    // TODO : Like api call
+    apiHandler(
+      () => (isLiked ? disLikePost(postId) : likePost(postId)),
+      null,
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
   };
-  const followBtnHandler = () => {
+  const followBtnHandler = async () => {
     setPostStates({ ...postStates, isFollowed: !isFollowed });
 
-    // TODO : follow api call
+    await apiHandler(
+      () => (isFollowed ? removeFollow(author._id) : addNewFollow(author._id)),
+      null,
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
   };
 
   return (
@@ -57,13 +68,13 @@ const SinglePost = ({ post }: { post: PostProps }) => {
           <div className="user-profile h-8 w-8 rounded-full  ">
             {/* {avatar} */}
             <img
-              src="luffy.jpg"
+              src={author.avatar}
               alt="profile"
               className="h-full w-full rounded-full object-cover"
             />
           </div>
           <div className="user-info text-base">
-            <span className="username font-semibold">{username}</span>
+            <span className="username font-semibold">{author.username}</span>
             <span> • </span>
             <span className="updated-days text-stone-400">{uploadedDate}</span>
             <span> • </span>
@@ -83,11 +94,19 @@ const SinglePost = ({ post }: { post: PostProps }) => {
       </div>
 
       <div className="center h-[585px] w-full">
-        <video
-          className="aspect-video h-full   "
-          src="video/whitebeard.mp4"
-          controls
-        ></video>
+        {postType === "image" ? (
+          <img
+            src={author.avatar}
+            alt="post-image"
+            className="h-full  border object-contain"
+          />
+        ) : (
+          <video
+            className="aspect-video h-full"
+            src={postPath}
+            controls
+          ></video>
+        )}
       </div>
 
       <div className="bottom space-y-2">
@@ -115,7 +134,7 @@ const SinglePost = ({ post }: { post: PostProps }) => {
             <span> likes</span>
           </p>
           <p className="description">
-            <span className="username font-semibold">{username}</span>
+            <span className="username font-semibold">{author.username}</span>
             {"  "}
             <span className="text-sm">{description}</span>
             <span className="text-sm leading-3 text-stone-400">...more</span>

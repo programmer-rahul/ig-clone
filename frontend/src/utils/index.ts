@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { ApiResponse } from "../interfaces/api";
+import { jwtDecode } from "jwt-decode";
 
 export const apiHandler = async (
   api: () => Promise<AxiosResponse<ApiResponse, any>>,
@@ -55,3 +56,22 @@ export class LocalStorage {
     localStorage.clear();
   }
 }
+
+export const validateToken = (token: string) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    console.log(decodedToken.exp);
+    console.log(Date.now() / 1000);
+
+    if (decodedToken.exp) {
+      if (decodedToken.exp < Date.now() / 1000) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Error in token validation");
+    return false;
+  }
+};

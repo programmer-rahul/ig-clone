@@ -4,10 +4,8 @@ import useHome from "../../hooks/useHome";
 import { useAuth } from "../../context/AuthContext";
 
 const SideNavBar = () => {
-  const { setIsPopup } = useHome();
+  const { setIsPopup, allNotifications } = useHome();
   const { user } = useAuth();
-
-  console.log("user", user);
 
   return (
     <div className="sidebar flex h-[8%] items-center border-t border-stone-700 text-stone-300 md:h-full md:w-[10%] md:flex-col md:justify-between md:border-r md:border-t-0 md:py-4 xl:w-[20%] xl:px-4 2xl:w-[14%]">
@@ -16,6 +14,7 @@ const SideNavBar = () => {
         <div className="mb-4">
           <Icon icon="instagramIcon" css="hidden md:block xl:hidden" />
           <h1 className="hidden text-2xl font-bold xl:block">Instagram</h1>
+          <p>N - {allNotifications.length}</p>
         </div>
 
         <IconLink icon="homeIcon" text="home" />

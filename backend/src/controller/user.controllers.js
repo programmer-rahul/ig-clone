@@ -198,3 +198,5 @@ export const getCurrentUser = async (req, res, next) => {
     .status(200)
     .json(new ApiResponse(200, { user }, "User fetched successfuly"));
 };
+
+// export const refreshAccessToken = async (req, res, next) => {};

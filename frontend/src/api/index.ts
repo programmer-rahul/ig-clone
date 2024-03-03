@@ -51,3 +51,22 @@ export const uploadPost = (
     cancelToken: cancelApi.token,
   });
 };
+export const fetchAllPosts = () => {
+  return axiosClient.get("/post/all-posts");
+};
+
+// like
+export const likePost = (postId: string) => {
+  return axiosClient.post("/like/add-post-like/" + postId);
+};
+export const disLikePost = (postId: string) => {
+  return axiosClient.delete("/like/remove-post-like/" + postId);
+};
+
+// follow
+export const addNewFollow = (userId: string) => {
+  return axiosClient.post("/follow/add-follower/" + userId);
+};
+export const removeFollow = (userId: string) => {
+  return axiosClient.delete("/follow/remove-follower/" + userId);
+};

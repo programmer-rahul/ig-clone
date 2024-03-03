@@ -5,9 +5,21 @@ import SideNavBar from "../components/homepage/SideNavBar";
 import useHome from "../hooks/useHome";
 import UploadPopUp from "../components/homepage/UploadPopUp";
 import ClosePopupIcon from "../components/reusable/ClosePopupIcon";
+import { useEffect } from "react";
+import { useSocket } from "../context/SocketContext";
 
 const HomePage = () => {
-  const { isPopup } = useHome();
+  const { isPopup, onNotification, onConnect, onSocketError, onDisconnect } =
+    useHome();
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    socket?.on("connected", onConnect);
+    socket?.on("socket-error", onSocketError);
+    socket?.on("disconnected", onDisconnect);
+    socket?.on("notification", onNotification);
+  }, [socket]);
 
   return (
     <main>
