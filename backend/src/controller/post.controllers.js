@@ -119,13 +119,46 @@ export const allPost = asyncHandler(async (req, res, next) => {
           username: "$author.username",
           avatar: "$author.avatar.url",
         },
+        userId: req.user._id,
+      },
+    },
+
+    {
+      $lookup: {
+        from: "follows",
+        foreignField: "followerId",
+        localField: "userId",
+        as: "isFollowing",
+        pipeline: [
+          {
+            $project: {
+              isFollowing: {
+                $cond: {
+                  if: {
+                    $and: [
+                      { $eq: ["$userId", "$isFollowing.followerId"] },
+                      { $eq: ["$author._id", "$isFollowing.followedId"] },
+                    ],
+                  },
+                  then: true,
+                  else: false,
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        isFollowing: { $first: "$isFollowing.isFollowing" },
       },
     },
   ]);
 
   if (!allPosts) return next(new ApiError(400, "Error in fetching all posts"));
 
-  console.log("All Posts :- ", allPosts[0]);
+  // console.log("All Posts :- ", allPosts[0]);
 
   return res
     .status(200)

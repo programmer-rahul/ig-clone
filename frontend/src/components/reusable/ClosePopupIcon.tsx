@@ -1,4 +1,4 @@
-import useHome from "../../hooks/useHome";
+import { useHome } from "../../context/HomeContext";
 
 const ClosePopupIcon = () => {
   const { setIsPopup } = useHome();

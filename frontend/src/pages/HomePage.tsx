@@ -2,11 +2,11 @@ import Topbar from "../components/homepage/Topbar";
 import SuggestedUsers from "../components/homepage/SuggestedUsers";
 import AllPostsContainer from "../components/homepage/AllPostsContainer";
 import SideNavBar from "../components/homepage/SideNavBar";
-import useHome from "../hooks/useHome";
 import UploadPopUp from "../components/homepage/UploadPopUp";
 import ClosePopupIcon from "../components/reusable/ClosePopupIcon";
 import { useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
+import { useHome } from "../context/HomeContext";
 
 const HomePage = () => {
   const { isPopup, onNotification, onConnect, onSocketError, onDisconnect } =

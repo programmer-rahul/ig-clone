@@ -1,7 +1,8 @@
 import Icon from "./Icon";
-import IconLink from "./IconLink";
-import useHome from "../../hooks/useHome";
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
+import { useHome } from "../../context/HomeContext";
+import IconLink from "./IconLink";
 
 const SideNavBar = () => {
   const { setIsPopup, allNotifications } = useHome();
@@ -17,7 +18,9 @@ const SideNavBar = () => {
           <p>N - {allNotifications.length}</p>
         </div>
 
-        <IconLink icon="homeIcon" text="home" />
+        <Link to="/">
+          <IconLink icon="homeIcon" text="home" />
+        </Link>
         <IconLink icon="searchIcon" text="search" css="hidden md:flex" />
         <IconLink icon="reelIcon" text="reels" />
         <IconLink
@@ -27,7 +30,9 @@ const SideNavBar = () => {
             setIsPopup(true);
           }}
         />
-        <IconLink icon="messangerIcon" text="Messages" />
+        <Link to="/chat">
+          <IconLink icon="messangerIcon" text="Messages" />
+        </Link>
         <IconLink icon="heartIcon" text="Notifications" css="hidden md:flex" />
 
         <IconLink

@@ -14,7 +14,7 @@ const AllPostsContainer = () => {
         () => fetchAllPosts(),
         null,
         (res) => {
-          console.log(res.data.posts);
+          // console.log(res.data.posts);
           setAllPosts(res.data.posts);
         },
         (err) => {
@@ -27,7 +27,7 @@ const AllPostsContainer = () => {
   }, []);
 
   return (
-    <div className="posts md:w-ful no-scrollbar h-full w-full overflow-scroll overflow-x-auto p-4 text-xs text-stone-300 lg:order-2 lg:w-2/3">
+    <div className="posts no-scrollbar h-full w-full overflow-scroll overflow-x-auto p-4 text-xs text-stone-300 md:w-full lg:order-2 lg:w-2/3">
       {/* stories  */}
       <div className="stories"></div>
 
@@ -38,7 +38,7 @@ const AllPostsContainer = () => {
           newPost["postPath"] = post.path;
           newPost["uploadedDate"] = "2w"; // add create at here
 
-          console.log(newPost);
+          // console.log(newPost);
           return <SinglePost key={index} post={newPost} />;
         })}
       </div>

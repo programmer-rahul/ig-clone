@@ -32,12 +32,17 @@ export const signupUser = (data: {
   return axiosClient.post("/user/signup", data);
 };
 
+// user
 export const verifyOtp = (data: { otp: string; singupdata: {} }) => {
   return axiosClient.post("/user/verify-otp", { ...data });
 };
 
 export const updateAvatar = (data: FormData) => {
   return axiosClient.put("/user/update-avatar", data);
+};
+
+export const findUser = (username: string) => {
+  return axiosClient.get("/user/find-user/" + username);
 };
 
 // post

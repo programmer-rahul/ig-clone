@@ -3,20 +3,14 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
-  useEffect,
+  useContext,
   useState,
 } from "react";
-import { User } from "../utils/types";
-import { useAuth } from "./AuthContext";
-import { LocalStorage } from "../utils";
 import { NotificationInterface } from "../interfaces/home";
 
 type ContextType = {
   isPopup: boolean;
-  currentUser: User | null;
-
   setIsPopup: Dispatch<SetStateAction<boolean>>;
-  setCurrentUser: Dispatch<SetStateAction<User | null>>;
 
   allNotifications: NotificationInterface[] | [];
 
@@ -29,9 +23,6 @@ export const HomeContext = createContext<ContextType>({
   isPopup: false,
   setIsPopup: () => {},
 
-  currentUser: null,
-  setCurrentUser: () => {},
-
   // states
   allNotifications: [],
 
@@ -43,20 +34,7 @@ export const HomeContext = createContext<ContextType>({
 });
 
 export const HomeProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
-
   const [isPopup, setIsPopup] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const localUser: User = LocalStorage.get("user");
-    return localUser ? localUser : null;
-  });
-
-  useEffect(() => {
-    const user: User = LocalStorage.get("user");
-    if (user && user) {
-      setCurrentUser(user);
-    }
-  }, [user]);
 
   const [isConnected, setIsConnected] = useState(false);
 
@@ -87,8 +65,6 @@ export const HomeProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isPopup,
         setIsPopup,
-        currentUser,
-        setCurrentUser,
 
         allNotifications,
 
@@ -102,3 +78,5 @@ export const HomeProvider = ({ children }: { children: ReactNode }) => {
     </HomeContext.Provider>
   );
 };
+
+export const useHome = () => useContext(HomeContext);

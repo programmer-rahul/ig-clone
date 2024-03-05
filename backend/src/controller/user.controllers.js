@@ -6,9 +6,8 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/generateToken.js";
-import { CookieOptions } from "../constants.js";
+import { AccessCookieOptions, RefreshCookieOptions } from "../constants.js";
 import { generateOtp } from "../utils/functions.js";
-
 import { getLocalFilePath, getStaticFilePath } from "../utils/helper.js";
 
 export const signIn = async (req, res, next) => {
@@ -50,8 +49,8 @@ export const signIn = async (req, res, next) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, CookieOptions)
-    .cookie("refreshToken", refreshToken, CookieOptions)
+    .cookie("accessToken", accessToken, AccessCookieOptions)
+    .cookie("refreshToken", refreshToken, RefreshCookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -138,8 +137,8 @@ export const verifyOTP = async (req, res, next) => {
   console.log("User signup success");
   return res
     .status(200)
-    .cookie("accessToken", accessToken, CookieOptions)
-    .cookie("refreshToken", refreshToken, CookieOptions)
+    .cookie("accessToken", accessToken, AccessCookieOptions)
+    .cookie("refreshToken", refreshToken, RefreshCookieOptions)
     .json(new ApiResponse(200, { user, accessToken }, "User signup success"));
 };
 
