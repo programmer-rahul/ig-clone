@@ -199,3 +199,21 @@ export const getCurrentUser = async (req, res, next) => {
 };
 
 // export const refreshAccessToken = async (req, res, next) => {};
+
+export const findUserUsingUsername = async (req, res, next) => {
+  const { username } = req.params;
+  console.log(username);
+
+  const foundUser = await UserModel.find({ username }).select(
+    "username avatar fullname"
+  );
+
+  // console.log(foundUser);
+  if (foundUser?.length === 0) return next(new ApiError(400, "No user found"));
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { user: foundUser }, "User found using username")
+    );
+};

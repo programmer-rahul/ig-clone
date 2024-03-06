@@ -7,6 +7,7 @@ import {
   signUp,
   updateAvatar,
   verifyOTP,
+  findUserUsingUsername,
 } from "../controller/user.controllers.js";
 
 const userRoutes = Router();
@@ -16,10 +17,12 @@ userRoutes.route("/signin").post(signIn);
 userRoutes.route("/signup").post(signUp);
 userRoutes.route("/verify-otp").post(verifyOTP);
 
+userRoutes.use(auth);
 userRoutes
   .route("/update-avatar")
-  .put(multerUpload.single("avatar"), auth, updateAvatar);
+  .put(multerUpload.single("avatar"), updateAvatar);
 
-userRoutes.route("/get-current-user").get(auth, getCurrentUser);
+userRoutes.route("/get-current-user").get(getCurrentUser);
+userRoutes.route("/find-user/:username").get(findUserUsingUsername);
 
 export default userRoutes;

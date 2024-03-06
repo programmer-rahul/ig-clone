@@ -4,3 +4,4 @@ export interface NotificationInterface {
   content: string;
   createdAt: Date;
 }
+

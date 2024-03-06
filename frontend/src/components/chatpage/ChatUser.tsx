@@ -1,17 +1,57 @@
-const ChatUser = () => {
+import { useEffect, useState } from "react";
+import { useChat } from "../../context/ChatContext";
+import { ChatMessageInterface, ChatUserInterface } from "../../interfaces/chat";
+
+const ChatUser = ({ chatUser }: { chatUser: ChatUserInterface }) => {
+  const { selectedChat, setSelectedChat, unreadMessages, setUnreadMessages } =
+    useChat();
+  const [unreadMessageCount, setUnreadMessageCount] = useState<
+    ChatMessageInterface[] | []
+  >([]);
+
+  useEffect(() => {
+    const unread = unreadMessages.filter((unreadMessage) => {
+      return unreadMessage?.sender === chatUser._id;
+    });
+    setUnreadMessageCount(unread);
+  }, [unreadMessages]);
+
+  useEffect(() => {
+    // this is for when user click on unread message user it will remove that message from unread message array
+    if (selectedChat?._id === chatUser._id) {
+      const newUnreadMessages = unreadMessages.filter(
+        (unreadMessage) =>
+          !unreadMessageCount.some(
+            (message) => message._id == unreadMessage._id,
+          ),
+      );
+      setUnreadMessages(newUnreadMessages);
+    }
+  }, [selectedChat]);
+
   return (
-    <div className="user flex cursor-pointer items-center justify-center gap-2 bg-stone-900 p-4 transition-all hover:bg-stone-600 lg:flex lg:p-2">
-      <div className="profile">
+    <div
+      className={`user flex cursor-pointer items-center justify-center gap-2  rounded-md p-4 transition-all hover:bg-stone-600 lg:flex lg:p-2 ${selectedChat?.username === chatUser.username ? "bg-stone-700" : "bg-stone-900"}`}
+      onClick={() => {
+        setSelectedChat(chatUser);
+      }}
+    >
+      <div className="profile relative">
         <img
-          src="luffy.jpg"
+          src={chatUser.avatar?.url}
           alt="user-profile"
           className="aspect-square max-w-16 rounded-full object-cover lg:max-w-14 xl:max-w-16"
         />
+        {unreadMessageCount.length !== 0 && (
+          <div className="unread-messages-count absolute -right-1 top-0 grid h-6 w-6 place-content-center rounded-md bg-rose-600 text-xl">
+            {unreadMessageCount.length}
+          </div>
+        )}
       </div>
 
       <div className="hidden w-full lg:block">
         <div className="font-semibold capitalize text-white">
-          <p>Fullname</p>
+          <p>{chatUser?.fullname}</p>
         </div>
 
         <div className="lastmessage relative flex w-full justify-between gap-2 text-stone-500 ">

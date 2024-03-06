@@ -1,10 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import AddNewUserPopUp from "./AddNewUserPopUp";
 import ChatUser from "./ChatUser";
+import { useChat } from "../../context/ChatContext";
+import { useAuth } from "../../context/AuthContext";
+import { apiHandler } from "../../utils";
+import { getAllChatUsers } from "../../api";
 
 const AllChatUserContainer = () => {
-  const [searchPopUp, setSearchPopUp] = useState(false);
   const searchPopUpRef = useRef<HTMLDivElement>(null);
+
+  const { allChatUsers, searchPopUp, setSearchPopUp, setAllChatUsers } =
+    useChat();
+  const { user } = useAuth();
 
   useEffect(() => {
     const windowClickHandler = (event: MouseEvent) => {
@@ -22,14 +29,31 @@ const AllChatUserContainer = () => {
     };
   }, [searchPopUp]);
 
+  useEffect(() => {
+    // fetch all chat users
+    const runApi = async () => {
+      await apiHandler(
+        () => getAllChatUsers(),
+        null,
+        (res) => {
+          setAllChatUsers(res.data.allChatUsers);
+        },
+        (err) => {
+          console.log(err);
+        },
+      );
+    };
+    runApi();
+  }, []);
+
   return (
     <>
       <div className="all-chats-users no-scrollbar h-full w-1/5 overflow-y-scroll bg-stone-900 p-2 text-xs text-stone-300 md:w-1/4 lg:w-1/3 2xl:w-1/4">
-        {/* stories  */}
+        {/* add new user  */}
         <div className="add-new-user ">
           <div className="flex items-center justify-center md:justify-between ">
             <p className="username hidden text-base font-bold md:block lg:text-xl">
-              username
+              {user?.username}
             </p>
             <div
               className=""
@@ -50,16 +74,9 @@ const AllChatUserContainer = () => {
             <p className="my-2 hidden text-xl font-bold lg:block">Messages</p>
           </div>
           <div className="mt-2 flex w-full flex-col gap-4">
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
-            <ChatUser />
+            {allChatUsers?.map((chatUser, index) => {
+              return <ChatUser chatUser={chatUser} key={index} />;
+            })}
           </div>
         </div>
       </div>

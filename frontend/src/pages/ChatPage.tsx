@@ -3,13 +3,35 @@ import { useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
 import AllChatUsersContainer from "../components/chatpage/AllChatUsersContainer";
 import ChatContainer from "../components/chatpage/ChatContainer";
+import { ChatMessageInterface } from "../interfaces/chat";
+import { useChat } from "../context/ChatContext";
 
 const ChatPage = () => {
   const { socket } = useSocket();
+  const { setSelectedChatMessages, selectedChat, setUnreadMessages } =
+    useChat();
+
+  const onMessageReceive = (receivedMessage: ChatMessageInterface) => {
+    if (selectedChat?._id === receivedMessage.sender) {
+      setSelectedChatMessages((prev) => {
+        return [...prev, receivedMessage];
+      });
+    } else {
+      setUnreadMessages((prev) => {
+        return [...prev, receivedMessage];
+      });
+    }
+  };
 
   useEffect(() => {
     if (!socket) return;
-  }, [socket]);
+
+    socket?.on("receive-message", onMessageReceive);
+
+    return () => {
+      socket.off("receive-message", onMessageReceive);
+    };
+  }, [socket, selectedChat]);
 
   return (
     <main>

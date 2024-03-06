@@ -75,3 +75,17 @@ export const addNewFollow = (userId: string) => {
 export const removeFollow = (userId: string) => {
   return axiosClient.delete("/follow/remove-follower/" + userId);
 };
+
+// message
+export const addNewMessage = (data: {
+  content: string;
+  receiverId: string;
+}) => {
+  return axiosClient.post("/message/new-message", data);
+};
+export const getAllMessages = (receiverId: string) => {
+  return axiosClient.get("/message/get-messages/" + receiverId);
+};
+export const getAllChatUsers = () => {
+  return axiosClient.get("/message/get-all-chat-users");
+};

@@ -1,11 +1,37 @@
+import { addNewMessage } from "../../api";
 import { useChat } from "../../context/ChatContext";
+import { ChatMessageInterface } from "../../interfaces/chat";
+import { apiHandler } from "../../utils";
 
 const ChatInputBar = () => {
-  const { userInput, setUserInput } = useChat();
+  const { userInput, setUserInput, selectedChat, setSelectedChatMessages } =
+    useChat();
 
-  const sendMessageHandler = () => {
-    console.log(userInput);
+  const sendMessageHandler = async () => {
     if (userInput?.trim() === "") return;
+
+    await apiHandler(
+      () =>
+        addNewMessage({
+          content: userInput,
+          receiverId: selectedChat ? selectedChat._id : "",
+        }),
+      null,
+      (res) => {
+        const newMessage: ChatMessageInterface = {
+          content: userInput,
+          receiver: res.data.message.receiver,
+          sender: res.data.message.sender,
+          _id: res.data.message._id,
+        };
+        setSelectedChatMessages((prev) => {
+          return [...prev, newMessage];
+        });
+
+        setUserInput("");
+      },
+      (err) => console.log(err),
+    );
   };
 
   return (
@@ -22,6 +48,11 @@ const ChatInputBar = () => {
             value={userInput}
             onChange={(e) => {
               setUserInput(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessageHandler();
+              }
             }}
           />
         </div>

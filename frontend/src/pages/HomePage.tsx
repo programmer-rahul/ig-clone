@@ -19,6 +19,13 @@ const HomePage = () => {
     socket?.on("socket-error", onSocketError);
     socket?.on("disconnected", onDisconnect);
     socket?.on("notification", onNotification);
+
+    return () => {
+      socket.off("connected", onConnect);
+      socket.off("socket-error", onSocketError);
+      socket.off("disconnected", onDisconnect);
+      socket.off("notification", onNotification);
+    };
   }, [socket]);
 
   return (

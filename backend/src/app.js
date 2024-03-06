@@ -41,14 +41,16 @@ app.use(express.static("public"));
 import userRoutes from "./routes/user.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import likeRoutes from "./routes/like.routes.js";
-import followRoutes from "./routes/follow.route.js";
-import commentRoutes from "./routes/comment.route.js";
+import followRoutes from "./routes/follow.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/post", postRoutes);
 app.use("/api/v1/like", likeRoutes);
 app.use("/api/v1/follow", followRoutes);
 app.use("/api/v1/comment", commentRoutes);
+app.use("/api/v1/message", messageRoutes);
 
 // io connection
 initializeSocket(io);
