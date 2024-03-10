@@ -45,6 +45,10 @@ export const findUser = (username: string) => {
   return axiosClient.get("/user/find-user/" + username);
 };
 
+export const refreshAccessToken = (token: string) => {
+  return axiosClient.put("/user/refresh-access-token", token);
+};
+
 // post
 export const uploadPost = (
   data: FormData,

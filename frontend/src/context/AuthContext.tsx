@@ -8,9 +8,10 @@ import {
   useState,
 } from "react";
 import { UserInterface } from "../interfaces/user";
-import { apiHandler, LocalStorage } from "../utils";
+import { apiHandler, LocalStorage, validateToken } from "../utils";
 import { signinUser } from "../api";
 import { useNavigate } from "react-router-dom";
+import { getNewAccessToken } from "../utils/helper";
 
 interface LoginInterface {
   data: { username: string; password: string };
@@ -49,6 +50,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     const _user = LocalStorage.get("user");
     const _token = LocalStorage.get("token");
+    const isAccessTokenValid = validateToken(_token);
+    console.log(isAccessTokenValid);
+
+    if (!isAccessTokenValid) {
+      getNewAccessToken(_token, setIsLoading);
+    }
+
     if (_user && _token) {
       setUser(_user);
       setToken(_token);

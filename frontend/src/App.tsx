@@ -5,8 +5,6 @@ import SignUpPage from "./pages/SignUpPage.tsx";
 import VerificationPage from "./pages/VerificationPage.tsx";
 import ProfileSetupPage from "./pages/ProfileSetupPage.tsx";
 import SignInPage from "./pages/SignInPage.tsx";
-import ProtectedRoute from "./services/ProtectedRoute.tsx";
-import PublicRoute from "./utils/PublicRoute.tsx";
 
 const App = () => {
   return (

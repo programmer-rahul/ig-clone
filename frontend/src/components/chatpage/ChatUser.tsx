@@ -3,11 +3,18 @@ import { useChat } from "../../context/ChatContext";
 import { ChatMessageInterface, ChatUserInterface } from "../../interfaces/chat";
 
 const ChatUser = ({ chatUser }: { chatUser: ChatUserInterface }) => {
-  const { selectedChat, setSelectedChat, unreadMessages, setUnreadMessages } =
-    useChat();
   const [unreadMessageCount, setUnreadMessageCount] = useState<
     ChatMessageInterface[] | []
   >([]);
+  const [isOnline, setIsOnline] = useState(false);
+
+  const {
+    selectedChat,
+    setSelectedChat,
+    unreadMessages,
+    setUnreadMessages,
+    onlineUsers,
+  } = useChat();
 
   useEffect(() => {
     const unread = unreadMessages.filter((unreadMessage) => {
@@ -29,6 +36,13 @@ const ChatUser = ({ chatUser }: { chatUser: ChatUserInterface }) => {
     }
   }, [selectedChat]);
 
+  useEffect(() => {
+    if (onlineUsers.length !== 0) {
+      const status = onlineUsers.some((id) => id === chatUser._id);
+      setIsOnline(status);
+    }
+  }, [onlineUsers]);
+
   return (
     <div
       className={`user flex cursor-pointer items-center justify-center gap-2  rounded-md p-4 transition-all hover:bg-stone-600 lg:flex lg:p-2 ${selectedChat?.username === chatUser.username ? "bg-stone-700" : "bg-stone-900"}`}
@@ -47,6 +61,10 @@ const ChatUser = ({ chatUser }: { chatUser: ChatUserInterface }) => {
             {unreadMessageCount.length}
           </div>
         )}
+
+        <div
+          className={`online-status absolute -right-1 bottom-1 grid h-5 w-5 place-content-center rounded-full text-xl ${isOnline ? "bg-green-500" : "bg-rose-800"}`}
+        ></div>
       </div>
 
       <div className="hidden w-full lg:block">

@@ -8,6 +8,7 @@ import {
   updateAvatar,
   verifyOTP,
   findUserUsingUsername,
+  refreshAccessToken,
 } from "../controller/user.controllers.js";
 
 const userRoutes = Router();
@@ -16,6 +17,7 @@ userRoutes.route("/signin").post(signIn);
 // signup
 userRoutes.route("/signup").post(signUp);
 userRoutes.route("/verify-otp").post(verifyOTP);
+userRoutes.route("/refresh-access-token").put(refreshAccessToken);
 
 userRoutes.use(auth);
 userRoutes

@@ -6,7 +6,7 @@ import {
   useEffect,
 } from "react";
 import socketio from "socket.io-client";
-import { LocalStorage, validateToken } from "../utils";
+import { LocalStorage } from "../utils";
 import { useAuth } from "./AuthContext";
 
 const getSocket = () => {

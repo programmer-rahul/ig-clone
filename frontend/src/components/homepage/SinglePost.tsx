@@ -17,7 +17,6 @@ const SinglePost = ({ post }: { post: PostInterface }) => {
     isSaved,
     likesCount,
     postId,
-    comments,
     postPath,
     postType,
     uploadedDate,

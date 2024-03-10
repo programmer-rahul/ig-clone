@@ -5,13 +5,16 @@ import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { apiHandler } from "../../utils";
 import { getAllChatUsers } from "../../api";
+import { useSocket } from "../../context/SocketContext";
 
 const AllChatUserContainer = () => {
   const searchPopUpRef = useRef<HTMLDivElement>(null);
 
   const { allChatUsers, searchPopUp, setSearchPopUp, setAllChatUsers } =
     useChat();
+
   const { user } = useAuth();
+  const { socket } = useSocket();
 
   useEffect(() => {
     const windowClickHandler = (event: MouseEvent) => {
@@ -30,7 +33,6 @@ const AllChatUserContainer = () => {
   }, [searchPopUp]);
 
   useEffect(() => {
-    // fetch all chat users
     const runApi = async () => {
       await apiHandler(
         () => getAllChatUsers(),
@@ -45,6 +47,12 @@ const AllChatUserContainer = () => {
     };
     runApi();
   }, []);
+
+  useEffect(() => {
+    // console.log(socket);
+    if (!socket || allChatUsers.length === 0) return;
+    socket.emit("find-online-users", allChatUsers);
+  }, [socket, allChatUsers]);
 
   return (
     <>

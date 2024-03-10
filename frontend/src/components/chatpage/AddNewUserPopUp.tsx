@@ -60,7 +60,9 @@ const SearchedUser = ({ user }: { user: ChatUserInterface }) => {
 
   const userClickHandler = async () => {
     setAllChatUsers((prev) => {
-      return [{ ...user }, ...prev];
+      return prev.some((chatUser) => chatUser._id === user._id)
+        ? prev
+        : [...prev, user];
     });
     setSelectedChat(user);
     setSearchPopUp(false);

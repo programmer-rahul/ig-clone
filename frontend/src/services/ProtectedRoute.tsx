@@ -5,7 +5,7 @@ import { Navigate, Outlet } from "react-router-dom";
 const ProtectedRoute = () => {
   const { user, token } = useAuth();
 
-  useEffect(()=>{},[user]);
+  useEffect(() => {}, [user]);
 
   if (!user || !token) return <Navigate to={"/signin"} />;
 

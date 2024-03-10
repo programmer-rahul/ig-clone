@@ -1,7 +1,12 @@
+import mongoose from "mongoose";
 import cookie from "cookie";
 import ApiError from "../utils/ApiError.js";
 import { validateToken } from "../utils/validateToken.js";
 import UserModel from "../models/user.models.js";
+
+let allRooms;
+let allConnectedUsers;
+let userFriends;
 
 const initializeSocket = (io) => {
   return io.on("connection", async (socket) => {
@@ -45,6 +50,21 @@ const initializeSocket = (io) => {
         if (socket.user?._id) {
           socket.leave(socket.user._id);
         }
+      });
+
+      socket.on("find-online-users", (allUsers) => {
+        // all sockets
+        allRooms = socket.adapter.rooms;
+        allConnectedUsers = allRooms
+          ? Array.from(allRooms.keys()).filter((id) =>
+              mongoose.Types.ObjectId.isValid(id)
+            )
+          : [];
+        userFriends = allUsers;
+        const onlineUsers = allConnectedUsers.filter((connectedUser) =>
+          allUsers.some((user) => user._id === connectedUser)
+        );
+        socket.emit("found-online-users", onlineUsers);
       });
     } catch (error) {
       socket.emit(

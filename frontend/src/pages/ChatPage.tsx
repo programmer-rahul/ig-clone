@@ -8,8 +8,12 @@ import { useChat } from "../context/ChatContext";
 
 const ChatPage = () => {
   const { socket } = useSocket();
-  const { setSelectedChatMessages, selectedChat, setUnreadMessages } =
-    useChat();
+  const {
+    setSelectedChatMessages,
+    selectedChat,
+    setUnreadMessages,
+    setOnlineUsers,
+  } = useChat();
 
   const onMessageReceive = (receivedMessage: ChatMessageInterface) => {
     if (selectedChat?._id === receivedMessage.sender) {
@@ -23,10 +27,15 @@ const ChatPage = () => {
     }
   };
 
+  const onOnlineUser = (onlineUsers: string[]) => {
+    setOnlineUsers(onlineUsers);
+  };
+
   useEffect(() => {
     if (!socket) return;
 
     socket?.on("receive-message", onMessageReceive);
+    socket?.on("found-online-users", onOnlineUser);
 
     return () => {
       socket.off("receive-message", onMessageReceive);

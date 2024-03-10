@@ -16,6 +16,7 @@ type ContextTypes = {
   selectedChat: ChatUserInterface | null;
   selectedChatMessages: ChatMessageInterface[] | [];
   unreadMessages: ChatMessageInterface[] | [];
+  onlineUsers: string[] | [];
 
   setUserInput: Dispatch<SetStateAction<string>>;
   setSearchPopUp: Dispatch<SetStateAction<boolean>>;
@@ -25,6 +26,7 @@ type ContextTypes = {
     SetStateAction<ChatMessageInterface[] | []>
   >;
   setUnreadMessages: Dispatch<SetStateAction<ChatMessageInterface[] | []>>;
+  setOnlineUsers: Dispatch<SetStateAction<string[] | []>>;
 };
 
 export const ChatContext = createContext<ContextTypes>({
@@ -34,6 +36,7 @@ export const ChatContext = createContext<ContextTypes>({
   selectedChat: null,
   selectedChatMessages: [],
   unreadMessages: [],
+  onlineUsers: [],
 
   setUserInput: () => {},
   setAllChatUsers: () => {},
@@ -41,6 +44,7 @@ export const ChatContext = createContext<ContextTypes>({
   setSelectedChat: () => {},
   setSelectedChatMessages: () => {},
   setUnreadMessages: () => {},
+  setOnlineUsers: () => {},
 });
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -59,6 +63,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     ChatMessageInterface[] | []
   >([]);
 
+  const [onlineUsers, setOnlineUsers] = useState<string[] | []>([]);
+
   return (
     <ChatContext.Provider
       value={{
@@ -74,6 +80,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setSelectedChatMessages,
         unreadMessages,
         setUnreadMessages,
+        onlineUsers,
+        setOnlineUsers,
       }}
     >
       {children}

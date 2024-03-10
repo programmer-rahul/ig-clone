@@ -36,7 +36,7 @@ export const HomeContext = createContext<ContextType>({
 export const HomeProvider = ({ children }: { children: ReactNode }) => {
   const [isPopup, setIsPopup] = useState(false);
 
-  const [isConnected, setIsConnected] = useState(false);
+  const [, setIsConnected] = useState(false);
 
   const [allNotifications, setAllNotifications] = useState<
     NotificationInterface[] | []

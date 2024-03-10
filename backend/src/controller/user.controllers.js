@@ -198,7 +198,11 @@ export const getCurrentUser = async (req, res, next) => {
     .json(new ApiResponse(200, { user }, "User fetched successfuly"));
 };
 
-// export const refreshAccessToken = async (req, res, next) => {};
+export const refreshAccessToken = async (req, res, next) => {
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+  console.log(incomingRefreshToken);
+};
 
 export const findUserUsingUsername = async (req, res, next) => {
   const { username } = req.params;
